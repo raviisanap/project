@@ -24,7 +24,3 @@ if __name__ == '__main__':
     # Flask runs on port 5000 by default, exposed via Docker
     app.run(host='0.0.0.0', port=5000)
 
-
-requirements.txt (Python Dependencies)
-Flask==2.3.2
-requests==2.31.0
