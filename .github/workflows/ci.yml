@@ -13,25 +13,26 @@ jobs:
     - name: Download code
       uses: actions/checkout@v3
 
-    - name: Start services
+    - name: Start Docker Compose
       run: |
         docker compose up -d --build
-        echo "Waiting for DB + API…"
+        echo "Waiting for services..."
         sleep 20
 
-    - name: Show container logs (debug)
-      run: |
-        echo "=== API LOGS ==="
-        docker compose logs api
-        echo "=== DB LOGS ==="
-        docker compose logs db
+    - name: Check container status
+      run: docker compose ps
+
+    - name: Show API Logs
+      run: docker compose logs api
+
+    - name: Show DB Logs
+      run: docker compose logs db
 
     - name: Run tests
-      run: |
-        docker compose ps
-        docker compose exec -T api python test_app.py
+      run: docker compose exec -T api python test_app.py
 
-    - name: Stop containers
+    - name: Stop services
       run: docker compose down
+
 
 
