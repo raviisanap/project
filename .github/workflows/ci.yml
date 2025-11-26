@@ -1,4 +1,4 @@
-name: CI Pipeline
+name: Simple CI
 
 on:
   push:
@@ -6,29 +6,32 @@ on:
   pull_request:
 
 jobs:
-  integration-test:
+  test:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
+    - name: Download code
       uses: actions/checkout@v3
 
-    - name: Set up Docker Compose
-      run: |
-        docker compose version || docker-compose version
-
-    - name: Build & Start Services
+    - name: Start services
       run: |
         docker compose up -d --build
-        echo "Waiting for containers to be ready..."
-        sleep 10
+        echo "Waiting for DB + API…"
+        sleep 20
 
-    - name: Run Integration Tests
+    - name: Show container logs (debug)
       run: |
+        echo "=== API LOGS ==="
+        docker compose logs api
+        echo "=== DB LOGS ==="
+        docker compose logs db
+
+    - name: Run tests
+      run: |
+        docker compose ps
         docker compose exec -T api python test_app.py
 
     - name: Stop containers
-      if: always()
-      run: |
-        docker compose down
+      run: docker compose down
+
 
